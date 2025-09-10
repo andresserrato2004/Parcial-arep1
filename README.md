@@ -11,9 +11,7 @@ despues compila el codigo usando mvn package
 mvn package
 ```
 
-depues usa  
-
-
+depues usa en terminales distintas
 ```bash 
 java -cp target/classes com.mycompany.app.Backend
 java -cp target/classes com.mycompany.app.HttpServer
