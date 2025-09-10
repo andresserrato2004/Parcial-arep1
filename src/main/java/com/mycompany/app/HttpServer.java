@@ -4,123 +4,188 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 
 public class HttpServer {
+    
+    private static final String BACKEND_HOST = "localhost";
+    private static final int BACKEND_PORT = 5000;
+    
     public static void main(String[] args) throws IOException {
-
-        int PORT_backend = 5000;  
-
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(36000);
         } catch (IOException e) {
-            System.err.println("Could not listen on port: 35000.");
+            System.err.println("Could not listen on port: 36000.");
             System.exit(1);
         }
+
+        System.out.println("Facade server started on port 36000");
+
         while (true) {
             Socket clientSocket = null;
             try {
-                System.out.println("Listo para recibir ...");
-                System.out.println("http://localhost:36000");
                 clientSocket = serverSocket.accept();
             } catch (IOException e) {
                 System.err.println("Accept failed.");
                 System.exit(1);
             }
 
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            String inputLine, outputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println("Recibí: " + inputLine);
-                if (!in.ready()) {
-                    break;
-                }
-            }
-
-            
-
-            outputLine = "HTTP/1.1 200 OK\r\n"
-                    + "Content-Type: text/html\r\n"
-                    + "\r\n"
-                    		    +"<!DOCTYPE html>\n"
-                    +"<html>\n"
-                    +"<head>\n"
-                    +"    <title>Form Example</title>\n"
-                    +"    <meta charset=\"UTF-8\">\n"
-                    +"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
-                    +"</head>\n"
-                    +"<body>\n"
-                    +"    <h1>Form with GET</h1>\n"
-                    +"    <form action=\"/add\">\n"
-                    +"        <label for=\"name\">add</label><br>\n"
-                    +"        <input type=\"text\" id=\"number\" name=\"number\" value=\"3.5\"><br><br>\n"
-                    +"        <input type=\"button\" value=\"Submit\" onclick=\"getadd()\">\n"
-                    +"    </form>\n"
-                    +"    <div id=\"getrespmsg\"></div>\n"
-                    +"    <form action=\"/list\">\n"
-                    +"        <label for=\"name\">list</label><br>\n"
-                    +"        <input type=\"button\" value=\"Submit\" onclick=\"getlist()\">\n"
-                    +"    </form>\n"
-                    +"    <div id=\"getrespmsg\"></div>\n"
-                    +"    <form action=\"/clear\">\n"
-                    +"        <label for=\"name\">clear</label><br>\n"
-                    +"        <input type=\"button\" value=\"Submit\" onclick=\"getclear()\">\n"
-                    +"    </form>\n"
-                    +"    <div id=\"getrespmsg\"></div>\n"
-                    +"    <form action=\"/stats\">\n"
-                    +"        <label for=\"name\">stats:</label><br>\n"
-                    +"        <input type=\"button\" value=\"Submit\" onclick=\"getstats()\">\n"
-                    +"    </form>\n"
-                    +"    <div id=\"getrespmsg\"></div>\n"
-                    +"    <script>\n"
-                    +"        function getlist() {\n"
-                    +"            let nameVar = document.getElementById(\"number\").value;\n"
-                    +"            const xhttp = new XMLHttpRequest();\n"
-                    +"            xhttp.open(\"GET\", \"/hello?name=\" + nameVar);\n"
-                    +"            xhttp.send();\n"
-                    +"        }\n"
-                    +"        function getadd() {\n"
-                    +"            let nameVar = document.getElementById(\"number\").value;\n"
-                    +"            const xhttp = new XMLHttpRequest();\n"
-                    +"            xhttp.onload = function () {\n"
-                    +"                document.getElementById(\"getrespmsg\").innerHTML =\n"
-                    +"                    \"nameVar \";\n"
-                    +"            }\n"
-                    +"            xhttp.open(\"GET\", \"/hello?name=\" + nameVar);\n"
-                    +"            xhttp.send();\n"
-                    +"        }\n"
-                    +"        function getclear() {\n"
-                    +"            let nameVar = document.getElementById(\"number\").value;\n"
-                    +"            const xhttp = new XMLHttpRequest();\n"
-                    +"            xhttp.onload = function () {\n"
-                    +"                document.getElementById(\"getrespmsg\").innerHTML =\n"
-                    +"                    \"linkedlist limpia\";\n"
-                    +"            }\n"
-                    +"            xhttp.open(\"GET\", \"/hello?name=\" + nameVar);\n"
-                    +"            xhttp.send();\n"
-                    +"        }\n"
-                    +"        function getstats() {\n"
-                    +"            let nameVar = document.getElementById(\"number\").value;\n"
-                    +"            const xhttp = new XMLHttpRequest();\n"
-                    +"            xhttp.onload = function () {\n"
-                    +"                document.getElementById(\"getrespmsg\").innerHTML =\n"
-                    +"                    \"implemenandose\";\n"
-                    +"            }\n"
-                    +"            xhttp.open(\"GET\", \"/hello?name=\" + nameVar);\n"
-                    +"            xhttp.send();\n"
-                    +"        }\n"
-                    +"    </script>\n"
-                    +"</body>\n"
-                    +"</html>\n";
-            
-            out.println(outputLine);
-            out.close();
-            in.close();
-            clientSocket.close();
+            handleRequest(clientSocket);
         }
+    }
+    
+    private static void handleRequest(Socket clientSocket) throws IOException {
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        String requestLine = in.readLine();
+        
+        String inputLine;
+        while ((inputLine = in.readLine()) != null && !inputLine.isEmpty()) {
+        }
+
+        if (requestLine != null) {
+            System.out.println("Request: " + requestLine);
+            String response = processRequest(requestLine);
+            out.println(response);
+        }
+
+        out.close();
+        in.close();
+        clientSocket.close();
+    }
+    
+    private static String processRequest(String requestLine) {
+        String[] parts = requestLine.split(" ");
+        if (parts.length < 2) {
+            return createErrorResponse(400, "invalid_request");
+        }
+        
+        String path = parts[1];
+        
+        if (path.equals("/")) {
+            return getClientHtml();
+        } else if (path.startsWith("/add") || path.equals("/list") || path.equals("/clear") ) {
+            return forwardToBackend(path);
+        } else {
+            return createErrorResponse(404, "not_found");
+        }
+    }
+    
+    private static String forwardToBackend(String path) {
+        try {
+            URL url = new URL("http://" + BACKEND_HOST + ":" + BACKEND_PORT + path);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()));
+            
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            
+            return createResponse(responseCode, response.toString());
+            
+        } catch (Exception e) {
+            String json = "{\"status\":\"ERR\",\"error\":\"backend_unreachable\"}";
+            return createResponse(502, json);
+        }
+    }
+    
+    private static String getClientHtml() {
+        String html = "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "    <title>Numbers API Client</title>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <h1>Numbers API Client</h1>\n" +
+            "    \n" +
+            "    <div>\n" +
+            "        <h2>Add Number</h2>\n" +
+            "        <input type=\"number\" id=\"numberInput\" value=\"3.5\" step=\"any\">\n" +
+            "        <button onclick=\"addNumber()\">Add</button>\n" +
+            "    </div>\n" +
+            "    \n" +
+            "    <div>\n" +
+            "        <h2>Operations</h2>\n" +
+            "        <button onclick=\"listNumbers()\">List</button>\n" +
+            "        <button onclick=\"clearNumbers()\">Clear</button>\n" +
+            "        <button onclick=\"getStats()\">Stats</button>\n" +
+            "    </div>\n" +
+            "    \n" +
+            "    <div>\n" +
+            "        <h2>Response</h2>\n" +
+            "        <pre id=\"response\"></pre>\n" +
+            "    </div>\n" +
+            "    \n" +
+            "    <script>\n" +
+            "        function showResponse(data) {\n" +
+            "            document.getElementById('response').textContent = JSON.stringify(data, null, 2);\n" +
+            "        }\n" +
+            "        \n" +
+            "        function addNumber() {\n" +
+            "            const number = document.getElementById('numberInput').value;\n" +
+            "            fetch('/add?x=' + number)\n" +
+            "                .then(response => response.json())\n" +
+            "                .then(data => showResponse(data))\n" +
+            "                .catch(error => showResponse({status: 'ERR', error: error.message}));\n" +
+            "        }\n" +
+            "        \n" +
+            "        function listNumbers() {\n" +
+            "            fetch('/list')\n" +
+            "                .then(response => response.json())\n" +
+            "                .then(data => showResponse(data))\n" +
+            "                .catch(error => showResponse({status: 'ERR', error: error.message}));\n" +
+            "        }\n" +
+            "        \n" +
+            "        function clearNumbers() {\n" +
+            "            fetch('/clear')\n" +
+            "                .then(response => response.json())\n" +
+            "                .then(data => showResponse(data))\n" +
+            "                .catch(error => showResponse({status: 'ERR', error: error.message}));\n" +
+            "        }\n" +
+            "        \n" +
+            "        function getStats() {\n" +
+            "            fetch('/stats')\n" +
+            "                .then(response => response.json())\n" +
+            "                .then(data => showResponse(data))\n" +
+            "                .catch(error => showResponse({status: 'ERR', error: error.message}));\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</body>\n" +
+            "</html>";
+        
+        return "HTTP/1.1 200 OK\r\n" +
+               "Content-Type: text/html\r\n" +
+               "\r\n" +
+               html;
+    }
+    
+    private static String createResponse(int statusCode, String content) {
+        String statusText = statusCode == 200 ? "OK" : 
+                           (statusCode == 400 ? "Bad Request" : 
+                           (statusCode == 409 ? "Conflict" : 
+                           (statusCode == 502 ? "Bad Gateway" : "Not Found")));
+        
+        return "HTTP/1.1 " + statusCode + " " + statusText + "\r\n" +
+               "Content-Type: application/json\r\n" +
+               "\r\n" +
+               content;
+    }
+    
+    private static String createErrorResponse(int statusCode, String error) {
+        String json = "{\"status\":\"ERR\",\"error\":\"" + error + "\"}";
+        return createResponse(statusCode, json);
     }
 }
