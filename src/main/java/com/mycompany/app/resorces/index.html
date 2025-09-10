@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Form with GET</h1>
+    <form action="/add">
+        <label for="name">add</label><br>
+        <input type="text" id="number" name="number" value="3.5"><br><br>
+        <input type="button" value="Submit" onclick="getadd()">
+    </form>
+    <div id="getrespmsg"></div>
+
+    <form action="/list">
+        <label for="name">list</label><br>
+        <input type="button" value="Submit" onclick="getlist()">
+    </form>
+    <div id="getrespmsg"></div>
+    <form action="/clear">
+        <label for="name">clear</label><br>
+        <input type="button" value="Submit" onclick="getclear()">
+    </form>
+    <div id="getrespmsg"></div>
+
+    <form action="/stats">
+        <label for="name">stats:</label><br>
+        <input type="text" id="name" name="name" value="John"><br><br>
+        <input type="button" value="Submit" onclick="getstats()">
+    </form>
+    <div id="getrespmsg"></div>
+    <script>
+        function getlist() {
+            let nameVar = document.getElementById("number").value;
+            const xhttp = new XMLHttpRequest();
+            
+
+            xhttp.open("GET", "/hello?name=" + nameVar);
+            xhttp.send();
+        }
+        function getlist() {
+            let nameVar = document.getElementById("number").value;
+            const xhttp = new XMLHttpRequest();
+            
+            xhttp.onload = function () {
+                document.getElementById("getrespmsg").innerHTML =
+                    this.responseText;
+            }
+            xhttp.open("GET", "/hello?name=" + nameVar);
+            xhttp.send();
+        }
+        function getclear() {
+            let nameVar = document.getElementById("number").value;
+            const xhttp = new XMLHttpRequest();
+            
+            xhttp.onload = function () {
+                document.getElementById("getrespmsg").innerHTML =
+                    this.responseText;
+            }
+
+            xhttp.open("GET", "/hello?name=" + nameVar);
+            xhttp.send();
+        }
+        function getstats() {
+            let nameVar = document.getElementById("number").value;
+            const xhttp = new XMLHttpRequest();
+            
+            xhttp.onload = function () {
+                document.getElementById("getrespmsg").innerHTML =
+                    this.responseText;
+            }
+
+            xhttp.open("GET", "/hello?name=" + nameVar);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>
