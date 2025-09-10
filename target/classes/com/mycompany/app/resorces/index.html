@@ -31,50 +31,43 @@
         <input type="button" value="Submit" onclick="getstats()">
     </form>
     <div id="getrespmsg"></div>
-    <script>
-        function getlist() {
-            let nameVar = document.getElementById("number").value;
-            const xhttp = new XMLHttpRequest();
-            
-
-            xhttp.open("GET", "/hello?name=" + nameVar);
-            xhttp.send();
-        }
-        function getlist() {
-            let nameVar = document.getElementById("number").value;
-            const xhttp = new XMLHttpRequest();
-            
-            xhttp.onload = function () {
-                document.getElementById("getrespmsg").innerHTML =
-                    this.responseText;
+        <script>
+            function getlist() {
+                let nameVar = document.getElementById("number").value;
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("GET", "/hello?name=" + nameVar);
+                xhttp.send();
             }
-            xhttp.open("GET", "/hello?name=" + nameVar);
-            xhttp.send();
-        }
-        function getclear() {
-            let nameVar = document.getElementById("number").value;
-            const xhttp = new XMLHttpRequest();
-            
-            xhttp.onload = function () {
-                document.getElementById("getrespmsg").innerHTML =
-                    this.responseText;
+            function getadd() {
+                let nameVar = document.getElementById("number").value;
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function () {
+                    document.getElementById("getrespmsg").innerHTML =
+                        this.responseText;
+                }
+                xhttp.open("GET", "/hello?name=" + nameVar);
+                xhttp.send();
             }
-
-            xhttp.open("GET", "/hello?name=" + nameVar);
-            xhttp.send();
-        }
-        function getstats() {
-            let nameVar = document.getElementById("number").value;
-            const xhttp = new XMLHttpRequest();
-            
-            xhttp.onload = function () {
-                document.getElementById("getrespmsg").innerHTML =
-                    this.responseText;
+            function getclear() {
+                let nameVar = document.getElementById("number").value;
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function () {
+                    document.getElementById("getrespmsg").innerHTML =
+                        this.responseText;
+                }
+                xhttp.open("GET", "/hello?name=" + nameVar);
+                xhttp.send();
             }
-
-            xhttp.open("GET", "/hello?name=" + nameVar);
-            xhttp.send();
-        }
-    </script>
+            function getstats() {
+                let nameVar = document.getElementById("number").value;
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function () {
+                    document.getElementById("getrespmsg").innerHTML =
+                        this.responseText;
+                }
+                xhttp.open("GET", "/hello?name=" + nameVar);
+                xhttp.send();
+            }
+        </script>
 </body>
 </html>
