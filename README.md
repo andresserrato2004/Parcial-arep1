@@ -15,6 +15,7 @@ depues usa
 
 
 ```bash 
+java -cp target/classes com.mycompany.app.Backend
 java -cp target/classes com.mycompany.app.HttpServer
 ```
 
