@@ -46,7 +46,7 @@ public class HttpServer {
             outputLine = "HTTP/1.1 200 OK\r\n"
                     + "Content-Type: text/html\r\n"
                     + "\r\n"
-                    +"<!DOCTYPE html>\n"
+                    		    +"<!DOCTYPE html>\n"
                     +"<html>\n"
                     +"<head>\n"
                     +"    <title>Form Example</title>\n"
